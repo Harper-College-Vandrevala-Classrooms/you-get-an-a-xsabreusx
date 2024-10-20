@@ -1,39 +1,45 @@
 #include "Gradebook.hpp"
 
-void Gradebook::addStudent(const std::string& firstName, const std::string& lastName, int studentID) {
+void Gradebook::addStudent(const string& firstName, const string& lastName, int studentID) 
+{
     students.push_back({firstName, lastName, studentID});
 }
 
-void Gradebook::addAssignment(const std::string& name, double totalPoints) {
-    assignments.push_back({name, totalPoints});
+void Gradebook::addAssignment(const string& assignmentName, double totalPoints) 
+{
+    assignments.push_back({assignmentName, totalPoints});
 }
 
-void Gradebook::assignGrade(int studentID, const std::string& assignmentName, double grade) {
+void Gradebook::assignGrade(int studentID, const string& assignmentName, double grade) 
+{
     grades[studentID][assignmentName] = grade;
 }
 
+// Prins an aesthetically pleasing report
 void Gradebook::printReport() const {
-    std::cout << "\nGradebook Report:\n";
-    std::cout << "--------------------------------------------------\n";
+    
+    cout << "\nGradebook Report:\n";
+    cout << "------------------------------------------------------------------\n";
 
-    // Print header
-    std::cout << "Student ID  Name           ";
+    // Print thi header
+    cout << "Student ID | Name | ";
     for (const auto& assignment : assignments) {
-        std::cout << assignment.name << " ";
+        cout << assignment.name << " | ";
     }
-    std::cout << "\n--------------------------------------------------\n";
+    cout << "\n------------------------------------------------------------------\n";
 
     // Print each student's grades
     for (const auto& student : students) {
-        std::cout << student.studentID << "  " 
-                  << student.firstName << " " << student.lastName << "  ";
-        
+        cout << student.studentID << " | "
+                  << student.firstName << " " << student.lastName << " | ";
+
         for (const auto& assignment : assignments) {
-            double grade = grades.at(student.studentID).count(assignment.name) 
-                           ? grades.at(student.studentID).at(assignment.name) 
+            double grade = grades.at(student.studentID).count(assignment.name)
+                           ? grades.at(student.studentID).at(assignment.name)
                            : 0.0;
-            std::cout << grade << "/" << assignment.totalPoints << "  ";
+            cout << grade << "/" << assignment.totalPoints << " | ";
         }
-        std::cout << "\n";
+        cout << "\n";
     }
 }
+
