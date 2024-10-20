@@ -35,5 +35,6 @@ public:
     void addAssignment(const string& name, double totalPoints);
     void assignGrade(int studentID, const string& assignmentName, double grade);
     void printReport() const;
+    bool assignmentExists(const string& name) const;
 };
 

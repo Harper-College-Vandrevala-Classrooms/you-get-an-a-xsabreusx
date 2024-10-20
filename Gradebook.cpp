@@ -43,3 +43,12 @@ void Gradebook::printReport() const {
     }
 }
 
+bool Gradebook::assignmentExists(const string& name) const {
+    for (const auto& assignment : assignments) {
+        if (assignment.name == name) {
+            return true;
+        }
+    }
+    return false;
+}
+
