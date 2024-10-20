@@ -17,44 +17,48 @@ bool Gradebook::assignmentExists(const string& name) const {
     return false;
 }
 
-void Gradebook::assignGrade(int studentID, const string& assignmentName, double grade) {
+void Gradebook::assignGrade(int studentID, const string& assignmentName, double grade) 
+{
+
     if (!assignmentExists(assignmentName)) {
         cerr << "Error: Assignment \"" << assignmentName << "\" does not exist.\n";
         return;
     }
+
     grades[studentID][assignmentName] = grade;
+
 }
 
 void Gradebook::printReport() const {
+    // An asthetically pleasing formatting printReport function
     cout << "\nGradebook Report:\n";
     cout << "--------------------------------------------------\n";
-
-    // Print the header row with assignment names
-    cout << "Student ID  Name           ";
+    cout << "Student ID | Name |  ";
     for (const auto& assignment : assignments) {
-        cout << assignment.name << " ";
+        cout << assignment.name << " | ";
     }
     cout << "\n--------------------------------------------------\n";
 
     // Print each student's grades safely
     for (const auto& student : students) {
-        cout << student.studentID << "  "
-            << student.firstName << " " << student.lastName << "  ";
+        cout << student.studentID << " | "
+            << student.firstName << " " << student.lastName << " | ";
 
         for (const auto& assignment : assignments) {
-            // Safely access the grade using .find() to avoid exceptions
+
             auto studentGrades = grades.find(student.studentID);
+
             if (studentGrades != grades.end()) {
                 auto gradeIt = studentGrades->second.find(assignment.name);
                 if (gradeIt != studentGrades->second.end()) {
-                    cout << gradeIt->second << "/" << assignment.totalPoints << "  ";
+                    cout << gradeIt->second << "/" << assignment.totalPoints << " | ";
                 }
                 else {
-                    cout << "0/" << assignment.totalPoints << "  ";  // No grade assigned
+                    cout << "*/" << assignment.totalPoints << " | ";  // No grade assigned
                 }
             }
             else {
-                cout << "0/" << assignment.totalPoints << "  ";  // No grades for this student
+                cout << "*/" << assignment.totalPoints << " | ";  // No grades for this student
             }
         }
         cout << "\n";
