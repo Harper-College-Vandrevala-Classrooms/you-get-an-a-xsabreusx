@@ -1,46 +1,11 @@
 #include "Gradebook.hpp"
 
-void Gradebook::addStudent(const string& firstName, const string& lastName, int studentID) 
-{
-    students.push_back({firstName, lastName, studentID});
+void Gradebook::addStudent(const string& firstName, const string& lastName, int studentID) {
+    students.push_back({ firstName, lastName, studentID });
 }
 
-void Gradebook::addAssignment(const string& assignmentName, double totalPoints) 
-{
-    assignments.push_back({assignmentName, totalPoints});
-}
-
-void Gradebook::assignGrade(int studentID, const string& assignmentName, double grade) 
-{
-    grades[studentID][assignmentName] = grade;
-}
-
-// Prins an aesthetically pleasing report
-void Gradebook::printReport() const {
-    
-    cout << "\nGradebook Report:\n";
-    cout << "------------------------------------------------------------------\n";
-
-    // Print thi header
-    cout << "Student ID | Name | ";
-    for (const auto& assignment : assignments) {
-        cout << assignment.name << " | ";
-    }
-    cout << "\n------------------------------------------------------------------\n";
-
-    // Print each student's grades
-    for (const auto& student : students) {
-        cout << student.studentID << " | "
-                  << student.firstName << " " << student.lastName << " | ";
-
-        for (const auto& assignment : assignments) {
-            double grade = grades.at(student.studentID).count(assignment.name)
-                           ? grades.at(student.studentID).at(assignment.name)
-                           : 0.0;
-            cout << grade << "/" << assignment.totalPoints << " | ";
-        }
-        cout << "\n";
-    }
+void Gradebook::addAssignment(const string& name, double totalPoints) {
+    assignments.push_back({ name, totalPoints });
 }
 
 bool Gradebook::assignmentExists(const string& name) const {
@@ -50,5 +15,49 @@ bool Gradebook::assignmentExists(const string& name) const {
         }
     }
     return false;
+}
+
+void Gradebook::assignGrade(int studentID, const string& assignmentName, double grade) {
+    if (!assignmentExists(assignmentName)) {
+        cerr << "Error: Assignment \"" << assignmentName << "\" does not exist.\n";
+        return;
+    }
+    grades[studentID][assignmentName] = grade;
+}
+
+void Gradebook::printReport() const {
+    cout << "\nGradebook Report:\n";
+    cout << "--------------------------------------------------\n";
+
+    // Print the header row with assignment names
+    cout << "Student ID  Name           ";
+    for (const auto& assignment : assignments) {
+        cout << assignment.name << " ";
+    }
+    cout << "\n--------------------------------------------------\n";
+
+    // Print each student's grades safely
+    for (const auto& student : students) {
+        cout << student.studentID << "  "
+            << student.firstName << " " << student.lastName << "  ";
+
+        for (const auto& assignment : assignments) {
+            // Safely access the grade using .find() to avoid exceptions
+            auto studentGrades = grades.find(student.studentID);
+            if (studentGrades != grades.end()) {
+                auto gradeIt = studentGrades->second.find(assignment.name);
+                if (gradeIt != studentGrades->second.end()) {
+                    cout << gradeIt->second << "/" << assignment.totalPoints << "  ";
+                }
+                else {
+                    cout << "0/" << assignment.totalPoints << "  ";  // No grade assigned
+                }
+            }
+            else {
+                cout << "0/" << assignment.totalPoints << "  ";  // No grades for this student
+            }
+        }
+        cout << "\n";
+    }
 }
 

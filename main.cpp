@@ -1,12 +1,14 @@
 #include <iostream>
+#include <limits>
 #include "Gradebook.hpp"
 using namespace std;
 
-void displayMenu(Gradebook& gb); // Function declarations
+void displayMenu(Gradebook& gb);
 int getIntInput(const string& prompt);
 double getDoubleInput(const string& prompt);
-void clearConsole();
 string getValidAssignmentName(Gradebook& gb);
+//void clearConsole();
+
 
 int main() {
 
@@ -51,7 +53,7 @@ int main() {
 
     if (enterProgram == "y")
     {
-        clearConsole();
+        //clearConsole();
         Gradebook gb2;
         displayMenu(gb2);  
         return 0;
@@ -68,16 +70,10 @@ int main() {
 
 ///// Function Definitions for trying the program Below  /////
 
-void clearConsole() {
-    cout << "\033[2J\033[H";  // Clear screen and move the cursor to the top left
-}
-
-// Implementing a menu-driven interface
-void displayMenu(Gradebook& gb) 
-{
+// Menu-driven interface
+void displayMenu(Gradebook& gb) {
     int choice = 0;
-    while (true) 
-    {
+    while (true) {
         cout << "\n--- Gradebook Menu ---\n";
         cout << "1. Add a new student\n";
         cout << "2. Add a new assignment\n";
@@ -86,103 +82,87 @@ void displayMenu(Gradebook& gb)
         cout << "5. Exit\n";
         cout << "Select an option: ";
 
-        choice = getIntInput("");  // Get a valid integer input
+        choice = getIntInput("");
 
         switch (choice) {
-            case 1: {
-
-                string firstName, lastName;
-                int studentID;
-
-                cout << "Enter student's first name: ";
-                cin >> firstName;
-                cout << "Enter student's last name: ";
-                cin >> lastName;
-                studentID = getIntInput("Enter student ID: ");
-                gb.addStudent(firstName, lastName, studentID);
-                cout << "Student added successfully!\n";
-                gb.printReport();
-                break;
-            }
-            case 2: {
-
-                string assignmentName;
-                double totalPoints;
-
-                cout << "Enter assignment name: ";
-                cin >> assignmentName;
-                totalPoints = getDoubleInput("Enter total points possible: ");
-                gb.addAssignment(assignmentName, totalPoints);
-                cout << "Assignment added successfully!\n";
-                gb.printReport();
-                break;
-            }
-            case 3: {
-                int studentID = getIntInput("Enter student ID: ");   // This case is able to determine if it's a valid assignment name
-                string assignmentName = getValidAssignmentName(gb);
-                double grade = getDoubleInput("Enter grade: ");
-                
-                gb.assignGrade(studentID, assignmentName, grade);
-                cout << "Grade assigned successfully!\n";
-                gb.printReport();
-                break;
-            }
-            case 4:
-                gb.printReport();
-                break;
-            case 5:
-                cout << "Exiting the program. Goodbye!\n";
-                return;
-            default:
-                cout << "Invalid option! Please choose a number between 1 and 5.\n";
-                break;
+        case 1: {
+            string firstName, lastName;
+            int studentID;
+            cout << "Enter student's first name: ";
+            cin >> firstName;
+            cout << "Enter student's last name: ";
+            cin >> lastName;
+            studentID = getIntInput("Enter student ID: ");
+            gb.addStudent(firstName, lastName, studentID);
+            cout << "Student added successfully!\n";
+            break;
+        }
+        case 2: {
+            string assignmentName;
+            double totalPoints;
+            cout << "Enter assignment name: ";
+            cin >> assignmentName;
+            totalPoints = getDoubleInput("Enter total points possible: ");
+            gb.addAssignment(assignmentName, totalPoints);
+            cout << "Assignment added successfully!\n";
+            break;
+        }
+        case 3: {
+            int studentID = getIntInput("Enter student ID: ");
+            string assignmentName = getValidAssignmentName(gb);
+            double grade = getDoubleInput("Enter grade: ");
+            gb.assignGrade(studentID, assignmentName, grade);
+            cout << "Grade assigned successfully!\n";
+            break;
+        }
+        case 4:
+            gb.printReport();
+            break;
+        case 5:
+            cout << "Exiting the program. Goodbye!\n";
+            return;
+        default:
+            cout << "Invalid option! Please choose a number between 1 and 5.\n";
+            break;
         }
     }
 }
 
-// Function to get Integer inputs + prompt message implementation
+// Function to safely get integer input with validation
 int getIntInput(const string& prompt) {
-
     int input;
-
     while (true) {
         cout << prompt;
         cin >> input;
-        if (cin.fail()|| input < 0) 
-        {
-            cin.clear();  
-            cin.ignore();  
-            cout << "Invalid input! Please enter a valid integer: \n";
-        } else {
+        if (cin.fail()) {
+            cin.clear();
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+            cout << "Invalid input! Please enter a valid integer.\n";
+        }
+        else {
             return input;
         }
     }
 }
 
-// Function to get double input + prompt message
+// Function to safely get double input with validation
 double getDoubleInput(const string& prompt) {
-
     double input;
-
     while (true) {
-
         cout << prompt;
         cin >> input;
-
-        if (cin.fail() || input < 0) // Ensuring it is positive and proper input, has no upper limit
-        {
-            cin.clear();  
-            cin.ignore();
+        if (cin.fail()) {
+            cin.clear();
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
             cout << "Invalid input! Please enter a valid number.\n";
-            cin >> input;
-        } 
-        else 
-        {
+        }
+        else {
             return input;
         }
     }
 }
 
+// Get a valid assignment name that exists in the Gradebook
 string getValidAssignmentName(Gradebook& gb) {
     string assignmentName;
     while (true) {
